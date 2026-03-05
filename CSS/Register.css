@@ -1,0 +1,71 @@
+﻿body {
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+.form-container {
+    width: 350px;
+    background: #ffffff;
+    padding: 30px;
+    margin: 80px auto;
+    border-radius: 10px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+
+table {
+    width: 100%;
+}
+
+td {
+    padding: 8px 0;
+}
+
+label {
+    font-weight: bold;
+    color: #444;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+#btn_register {
+    width: 100%;
+    background: #667eea;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+    #btn_register:hover {
+        background: #5563d6;
+    }
+
+#lbl_message {
+    text-align: center;
+    font-weight: bold;
+    color: red;
+}

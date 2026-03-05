@@ -1,0 +1,14 @@
+﻿.sidebar {
+    width: 240px;
+    position: fixed;
+    height: 100vh;
+    background: #0f172a;
+}
+
+.main {
+    margin-left: 240px;
+}
+
+.content {
+    padding: 30px;
+}
