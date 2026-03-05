@@ -19,7 +19,7 @@
             <a href="/Agent/MyProperties.aspx">My Properties</a>
             <a href="/Agent/Bookings.aspx">Bookings</a>
             <a href="/Agent/Profile.aspx">Profile</a>
-            <a href="/Logout.aspx">Logout</a>
+            <a href="../Logout.aspx">Logout</a>
         </div>
 
         <!-- Main Content -->

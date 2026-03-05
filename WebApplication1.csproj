@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="About.aspx" />
     <Content Include="Admin\adminDashboard.aspx" />
     <Content Include="Admin\AddCity.aspx" />
     <Content Include="Admin\AddProperty.aspx" />
@@ -83,6 +84,7 @@
     <Content Include="App_Data\RealEstateDB_log.ldf">
       <DependentUpon>RealEstateDB.mdf</DependentUpon>
     </Content>
+    <Content Include="Contact.aspx" />
     <Content Include="CSS\admin-form.css" />
     <Content Include="CSS\AdminDashboard.css" />
     <Content Include="CSS\agent-dashboard.css" />
@@ -96,11 +98,19 @@
     <Content Include="Login.aspx" />
     <Content Include="Logout.aspx" />
     <Content Include="Admin\ManageUsers.aspx" />
+    <Content Include="Properties.aspx" />
     <Content Include="Register.aspx" />
     <Content Include="UserDashboard.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About.aspx.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="About.aspx.designer.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Admin\adminDashboard.aspx.cs">
       <DependentUpon>adminDashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -185,6 +195,13 @@
     <Compile Include="Agent\Profile.aspx.designer.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Contact.aspx.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Contact.aspx.designer.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Home.aspx.cs">
       <DependentUpon>Home.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -212,6 +229,13 @@
     </Compile>
     <Compile Include="Admin\ManageUsers.aspx.designer.cs">
       <DependentUpon>ManageUsers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties.aspx.cs">
+      <DependentUpon>Properties.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Properties.aspx.designer.cs">
+      <DependentUpon>Properties.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Register.aspx.cs">

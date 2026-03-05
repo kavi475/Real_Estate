@@ -30,8 +30,8 @@
         </div>--%>
 
         <!-- ================= NAVBAR ================= -->
-
-        <div class="navbar">
+        <!-- ================= NAVBAR ================= -->
+        <nav class="navbar fixed-top" style="background: #f2f2f2; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; height: 70px;">
 
             <div class="title">
                 <h3>Real Estate Management System</h3>
@@ -49,8 +49,7 @@
                 <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="loginBtn" OnClick="btnLogin_Click" />
             </div>
 
-        </div>
-
+        </nav>
         <!-- ================= HERO ================= -->
 
         <section class="hero">
@@ -132,12 +131,11 @@
 
                 <div class="about-col">
                     <h2 class="logo">REMS</h2>
-                    <p>D-204, Hole Town South West</p>
-                    <p>Delhi - 110096</p>
+                    <p>Prime Arcade, Adajan</p>
+                    <p>Surat - 395009</p>
                     <p>+91 8529631235</p>
                     <p>info@gmail.com</p>
                 </div>
-
                 <div class="about-col">
                     <h3>Company</h3>
                     <a href="#">About Us</a>
