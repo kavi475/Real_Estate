@@ -54,40 +54,37 @@ namespace WebApplication1.Admin
             gvProperties.DataSource = dt;
             gvProperties.DataBind();
         }
+
         protected void gvProperties_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            // ✅ Get PropertyId from CommandArgument
             int propertyId = Convert.ToInt32(e.CommandArgument);
-            string status = "";
 
             if (e.CommandName == "Approve")
-                status = "Approved";
+            {
+                UpdateApproval(propertyId, "Approved");
+            }
             else if (e.CommandName == "Reject")
-                status = "Rejected";
-            else if (e.CommandName == "Delete")
+            {
+                UpdateApproval(propertyId, "Rejected");
+            }
+            else if (e.CommandName == "DeleteProp")
             {
                 DeleteProperty(propertyId);
-                return;
             }
-            else
-                return;
+        }
 
-            // Update IsApproved status
+        void UpdateApproval(int id, string status)
+        {
             SqlConnection con = new SqlConnection(strcon);
             string query = "UPDATE Properties SET IsApproved=@status WHERE PropertyId=@id";
             SqlCommand cmd = new SqlCommand(query, con);
             cmd.Parameters.AddWithValue("@status", status);
-            cmd.Parameters.AddWithValue("@id", propertyId);
+            cmd.Parameters.AddWithValue("@id", id);
             con.Open();
             cmd.ExecuteNonQuery();
             con.Close();
-
             LoadProperties();
-        }
-
-        protected void gvProperties_RowDeleting(object sender, GridViewDeleteEventArgs e)
-        {
-            int id = Convert.ToInt32(gvProperties.DataKeys[e.RowIndex].Value);
-            DeleteProperty(id);
         }
 
         void DeleteProperty(int id)

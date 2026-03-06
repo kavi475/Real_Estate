@@ -18,7 +18,7 @@
             <a href="ManageProperties.aspx">Properties</a>
             <a href="ManageUsers.aspx">Users</a>
             <a href="ManageBookings.aspx">Bookings</a>
-            <a href="Logout.aspx">Logout</a>
+            <a href="../Logout.aspx">Logout</a>
         </div>
         <div class="main-content">
             <h1 class="page-title">Manage Users</h1>

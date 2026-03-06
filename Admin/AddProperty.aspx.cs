@@ -74,7 +74,7 @@ namespace WebApplication1.Admin
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            // STEP 1 - Validate all fields
+            // STEP 1 - Validate fields
             if (txtTitle.Text.Trim() == "" || txtLocation.Text.Trim() == "" ||
                 txtPrice.Text.Trim() == "" || ddlStatus.SelectedValue == "" ||
                 ddlState.SelectedValue == "" || ddlCity.SelectedValue == "")
@@ -84,42 +84,23 @@ namespace WebApplication1.Admin
                 return;
             }
 
-            if (!fileImage.HasFile)
+            // STEP 2 - Check if any files uploaded
+            HttpFileCollection uploadedFiles = Request.Files;
+            if (uploadedFiles.Count == 0 || uploadedFiles[0].ContentLength == 0)
             {
                 lblMsg.ForeColor = System.Drawing.Color.Red;
-                lblMsg.Text = "Please select an image.";
+                lblMsg.Text = "Please select at least one image.";
                 return;
             }
 
-            // STEP 2 - Validate image extension
-            string extension = Path.GetExtension(fileImage.FileName).ToLower();
-            if (extension != ".jpg" && extension != ".jpeg" &&
-                extension != ".png" && extension != ".webp")
-            {
-                lblMsg.ForeColor = System.Drawing.Color.Red;
-                lblMsg.Text = "Only jpg, jpeg, png, webp images allowed.";
-                return;
-            }
-
-            // STEP 3 - Create unique file name to avoid overwriting
-            string fileName = Guid.NewGuid().ToString() + extension;
-
-            // STEP 4 - Save image physically to PropertyImages folder
-            string savePath = Server.MapPath("~/PropertyImages/") + fileName;
-            fileImage.SaveAs(savePath);
-
-            // STEP 5 - Store only relative path in database
-            string imagePath = "PropertyImages/" + fileName;
-
-            // STEP 6 - Save to database
+            // STEP 3 - Save property to database first
             SqlConnection con = new SqlConnection(strcon);
             con.Open();
 
-            // Insert into Properties and get new PropertyId
             string propQuery = @"INSERT INTO Properties 
-                                (Title, Location, Price, Status) 
-                                VALUES (@title, @location, @price, @status);
-                                SELECT SCOPE_IDENTITY();";
+                        (Title, Location, Price, Status, IsApproved) 
+                        VALUES (@title, @location, @price, @status, 'Pending');
+                        SELECT SCOPE_IDENTITY();";
 
             SqlCommand propCmd = new SqlCommand(propQuery, con);
             propCmd.Parameters.AddWithValue("@title", txtTitle.Text.Trim());
@@ -127,19 +108,39 @@ namespace WebApplication1.Admin
             propCmd.Parameters.AddWithValue("@price", txtPrice.Text.Trim());
             propCmd.Parameters.AddWithValue("@status", ddlStatus.SelectedValue);
 
-            // Get the new PropertyId
             int propertyId = Convert.ToInt32(propCmd.ExecuteScalar());
 
-            // Insert image path into PropertyImages table
-            string imgQuery = "INSERT INTO PropertyImages (PropertyId, ImagePath) VALUES (@propertyId, @imagePath)";
-            SqlCommand imgCmd = new SqlCommand(imgQuery, con);
-            imgCmd.Parameters.AddWithValue("@propertyId", propertyId);
-            imgCmd.Parameters.AddWithValue("@imagePath", imagePath);
-            imgCmd.ExecuteNonQuery();
+            // STEP 4 - Loop through all uploaded images
+            for (int i = 0; i < uploadedFiles.Count; i++)
+            {
+                HttpPostedFile file = uploadedFiles[i];
+
+                if (file.ContentLength == 0) continue;
+
+                // Validate extension
+                string extension = System.IO.Path.GetExtension(file.FileName).ToLower();
+                if (extension != ".jpg" && extension != ".jpeg" &&
+                    extension != ".png" && extension != ".webp")
+                    continue;
+
+                // Create unique file name
+                string fileName = Guid.NewGuid().ToString() + extension;
+
+                // Save file physically
+                string savePath = Server.MapPath("~/PropertyImages/") + fileName;
+                file.SaveAs(savePath);
+
+                // Save path to database
+                string imagePath = "PropertyImages/" + fileName;
+                string imgQuery = "INSERT INTO PropertyImages (PropertyId, ImagePath) VALUES (@propertyId, @imagePath)";
+                SqlCommand imgCmd = new SqlCommand(imgQuery, con);
+                imgCmd.Parameters.AddWithValue("@propertyId", propertyId);
+                imgCmd.Parameters.AddWithValue("@imagePath", imagePath);
+                imgCmd.ExecuteNonQuery();
+            }
 
             con.Close();
 
-            // STEP 7 - Redirect back to manage properties
             Response.Redirect("/Admin/ManageProperties.aspx");
         }
     }

@@ -31,12 +31,13 @@ namespace WebApplication1
         void LoadPropertyDetails(string id)
         {
             SqlConnection con = new SqlConnection(strcon);
-            string query = @"SELECT p.PropertyId, p.Title, p.Location, p.Price, 
-                            p.Status, p.IsApproved,
-                            pi.ImagePath
-                            FROM Properties p
-                            LEFT JOIN PropertyImages pi ON p.PropertyId = pi.PropertyId
-                            WHERE p.PropertyId = @id";
+
+            // Load property details
+            string query = @"SELECT PropertyId, Title, Location, 
+                    Price, Status, IsApproved
+                    FROM Properties 
+                    WHERE PropertyId = @id";
+
             SqlCommand cmd = new SqlCommand(query, con);
             cmd.Parameters.AddWithValue("@id", id);
             con.Open();
@@ -49,7 +50,6 @@ namespace WebApplication1
                 lblLocation.Text = dr["Location"].ToString();
                 lblApproved.Text = dr["IsApproved"].ToString();
 
-                // Set status badge color
                 string status = dr["Status"].ToString();
                 lblStatus.Text = status;
                 if (status == "Available")
@@ -58,14 +58,26 @@ namespace WebApplication1
                     lblStatus.CssClass = "detail-status status-sold";
                 else
                     lblStatus.CssClass = "detail-status status-rent";
-
-                // Set image
-                string imagePath = dr["ImagePath"].ToString();
-                imgProperty.ImageUrl = string.IsNullOrEmpty(imagePath)
-                    ? "https://via.placeholder.com/800x400?text=No+Image"
-                    : "/" + imagePath;
             }
+            dr.Close();
+
+            // Load all images for this property
+            string imgQuery = "SELECT ImagePath FROM PropertyImages WHERE PropertyId = @id";
+            SqlCommand imgCmd = new SqlCommand(imgQuery, con);
+            imgCmd.Parameters.AddWithValue("@id", id);
+            SqlDataReader imgDr = imgCmd.ExecuteReader();
+
+            var images = new System.Collections.Generic.List<string>();
+            while (imgDr.Read())
+            {
+                images.Add("/" + imgDr["ImagePath"].ToString());
+            }
+            imgDr.Close();
             con.Close();
+
+            // Bind images to repeater
+            rptImages.DataSource = images;
+            rptImages.DataBind();
         }
 
         protected void btnBook_Click(object sender, EventArgs e)

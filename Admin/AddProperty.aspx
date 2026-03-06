@@ -76,9 +76,11 @@
                 CssClass="input-box">
             </asp:DropDownList>
 
-            <label class="form-label">Property Image</label>
-            <asp:FileUpload ID="fileImage" runat="server"
-                CssClass="input-box" />
+            <label class="form-label">Property Images (Select multiple)</label>
+            <input type="file" name="fileImages"
+                multiple="multiple"
+                accept=".jpg,.jpeg,.png,.webp"
+                class="input-box" />
 
             <asp:Button ID="btnSave" runat="server"
                 Text="Save Property"

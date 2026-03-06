@@ -19,11 +19,6 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.08);
             overflow: hidden;
         }
-        .detail-img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-        }
         .detail-body {
             padding: 30px;
         }
@@ -114,9 +109,6 @@
             background: #e9ecef;
             color: #333;
         }
-        asp\:Label.success-msg {
-            color: green;
-        }
     </style>
 </head>
 <body>
@@ -147,7 +139,29 @@
                 <!-- LEFT - IMAGE AND DETAILS -->
                 <div class="col-lg-8">
                     <div class="detail-card">
-                        <asp:Image ID="imgProperty" runat="server" CssClass="detail-img" />
+
+                        <!-- IMAGE CAROUSEL -->
+                        <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <asp:Repeater ID="rptImages" runat="server">
+                                    <ItemTemplate>
+                                        <div class='<%# Container.ItemIndex == 0 ? "carousel-item active" : "carousel-item" %>'>
+                                            <img src='<%# Container.DataItem %>'
+                                                style="width:100%; height:400px; object-fit:cover;" />
+                                        </div>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+                            </div>
+                            <button class="carousel-control-prev" type="button"
+                                data-bs-target="#imageCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button"
+                                data-bs-target="#imageCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        </div>
+
                         <div class="detail-body">
                             <div class="detail-title">
                                 <asp:Label ID="lblTitle" runat="server"></asp:Label>
@@ -252,5 +266,9 @@
     </section>
 
 </form>
+
+<!-- BOOTSTRAP JS FOR CAROUSEL -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

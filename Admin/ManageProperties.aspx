@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-
         .sidebar {
             width: 220px;
             height: 100vh;
@@ -226,7 +225,6 @@
             <asp:GridView ID="gvProperties" runat="server"
                 AutoGenerateColumns="false"
                 CssClass="table"
-                OnRowDeleting="gvProperties_RowDeleting"
                 OnRowCommand="gvProperties_RowCommand"
                 DataKeyNames="PropertyId"
                 EmptyDataText="No properties found.">
@@ -258,7 +256,7 @@
                             <asp:Button ID="btnDelete" runat="server"
                                 Text="Delete"
                                 CssClass="btn-delete"
-                                CommandName="Delete"
+                                CommandName="DeleteProp"
                                 CommandArgument='<%# Eval("PropertyId") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
