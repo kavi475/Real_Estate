@@ -64,7 +64,7 @@
             </div>
 
             <div class="card">
-                <p>Total Property Listed</p>
+                <p>Total Listed Property</p>
                 <hr />
                 <asp:Label ID="lblListed" runat="server" Text="5"></asp:Label>
                 <hr />

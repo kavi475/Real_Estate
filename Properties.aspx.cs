@@ -20,6 +20,16 @@ namespace WebApplication1
             }
         }
 
+        protected void btnLogin_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Login.aspx");
+        }
+
+        protected void btnSignup_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Register.aspx");
+        }
+
         void LoadStates()
         {
             SqlConnection con = new SqlConnection(strcon);
@@ -110,6 +120,9 @@ namespace WebApplication1
 
             con.Close();
         }
+
+
+      
 
     }
 }

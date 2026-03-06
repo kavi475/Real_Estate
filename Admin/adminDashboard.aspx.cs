@@ -35,6 +35,7 @@ namespace WebApplication1
                 Total_city();
                 Total_Users();
                 Total_Agents();
+                Total_ListedProperty();
             }
         }
 
@@ -86,6 +87,16 @@ namespace WebApplication1
             int totalUsers = Convert.ToInt32(cmd.ExecuteScalar());
             con.Close();
             lblAgents.Text = totalUsers.ToString();
+        }
+
+        public void Total_ListedProperty()
+        {
+            SqlConnection con = new SqlConnection(strcon);
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM Properties WHERE Status='Approve'", con);
+            con.Open();
+            int totalUsers = Convert.ToInt32(cmd.ExecuteScalar());
+            con.Close();
+            lblListed.Text = totalUsers.ToString();
         }
 
 

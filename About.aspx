@@ -58,7 +58,7 @@
             </ul>
 
             <div class="auth">
-                <asp:Button ID="btnSignup" runat="server" Text="Sign Up" CssClass="loginBtn" />
+                <asp:Button ID="btnSignup" runat="server" Text="Sign Up" CssClass="loginBtn" OnClick="btnSignup_Click" />
                 <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="loginBtn" />
             </div>
 
@@ -198,14 +198,14 @@ manage bookings, and find their dream home quickly and securely.
             </div>
             <div class="about-col">
                 <h3>Company</h3>
-                <a href="#">About Us</a>
-                <a href="#">Contact Us</a>
-                <a href="#">Properties</a>
+                <a href="About.aspx">About Us</a>
+                <a href="Contact.aspx">Contact Us</a>
+                <a href="Properties.aspx">Properties</a>
             </div>
             <div class="about-col">
                 <h3>More Links</h3>
-                <a href="#">Admin</a>
-                <a href="#">Home</a>
+                <a href="Login.aspx">Admin</a>
+                <a href="Home.aspx">Home</a>
             </div>
             <div class="about-image">
                 <img src="https://cdn-icons-png.flaticon.com/512/1946/1946436.png" />

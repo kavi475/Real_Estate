@@ -54,32 +54,26 @@ namespace WebApplication1.Admin
         void LoadProperties()
         {
             SqlConnection con = new SqlConnection(strcon);
-            String query = "SELECT * FROM Properties";
-
+            string query = "SELECT PropertyId, Title, Location, Price, Status FROM Properties";
             con.Open();
             SqlDataAdapter sda = new SqlDataAdapter(query, con);
-            DataSet ds = new DataSet();
-            sda.Fill(ds);
-
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
             gv_viewList.DataKeyNames = new string[] { "PropertyId" };
-            gv_viewList.DataSource = ds;    
-            gv_viewList.DataBind(); 
+            gv_viewList.DataSource = dt;
+            gv_viewList.DataBind();
             con.Close();
-            
         }
-
         void LoadStates()
         {
             SqlConnection con = new SqlConnection(strcon);
-            String query = "SELECT * FROM States";
-
+            string query = "SELECT StateId, StateName FROM States";
             con.Open();
             SqlDataAdapter sda = new SqlDataAdapter(query, con);
-            DataSet ds = new DataSet();
-            sda.Fill(ds);
-
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
             gv_viewList.DataKeyNames = new string[] { "StateId" };
-            gv_viewList.DataSource = ds;
+            gv_viewList.DataSource = dt;
             gv_viewList.DataBind();
             con.Close();
         }
@@ -87,14 +81,13 @@ namespace WebApplication1.Admin
         void LoadCities()
         {
             SqlConnection con = new SqlConnection(strcon);
-            String query = "SELECT * FROM Cities";
-
+            string query = "SELECT CityId, CityName, StateId FROM Cities";
             con.Open();
             SqlDataAdapter sda = new SqlDataAdapter(query, con);
-            DataSet ds = new DataSet();
-            sda.Fill(ds);
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
             gv_viewList.DataKeyNames = new string[] { "CityId" };
-            gv_viewList.DataSource = ds;
+            gv_viewList.DataSource = dt;
             gv_viewList.DataBind();
             con.Close();
         }
@@ -102,15 +95,13 @@ namespace WebApplication1.Admin
         void LoadUsers()
         {
             SqlConnection con = new SqlConnection(strcon);
-            String query = "SELECT * FROM Users";
-
+            string query = "SELECT UserId, Email, Role FROM Users";
             con.Open();
             SqlDataAdapter sda = new SqlDataAdapter(query, con);
-            DataSet ds = new DataSet();
-            sda.Fill(ds);
-
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
             gv_viewList.DataKeyNames = new string[] { "UserId" };
-            gv_viewList.DataSource = ds;
+            gv_viewList.DataSource = dt;
             gv_viewList.DataBind();
             con.Close();
         }
@@ -118,18 +109,14 @@ namespace WebApplication1.Admin
         void LoadAgents()
         {
             SqlConnection con = new SqlConnection(strcon);
-
             string query = "SELECT UserId, Email, Role FROM Users WHERE Role = 'Agent'";
-
             con.Open();
             SqlDataAdapter sda = new SqlDataAdapter(query, con);
-            DataSet ds = new DataSet();
-            sda.Fill(ds);
-
+            DataTable dt = new DataTable();
+            sda.Fill(dt);
             gv_viewList.DataKeyNames = new string[] { "UserId" };
-            gv_viewList.DataSource = ds;
+            gv_viewList.DataSource = dt;
             gv_viewList.DataBind();
-
             con.Close();
         }
 
@@ -178,6 +165,11 @@ namespace WebApplication1.Admin
                 value = e.NewValues["Email"].ToString();
                 query = "UPDATE Users SET Email=@val WHERE UserId=@id";
             }
+            else if (type == "agents")
+            {
+                value = e.NewValues["Email"].ToString();
+                query = "UPDATE Users SET Email=@val WHERE UserId=@id";
+            }
 
             if (string.IsNullOrEmpty(query))
             {
@@ -186,15 +178,14 @@ namespace WebApplication1.Admin
                 return;
             }
 
-            using (SqlConnection con = new SqlConnection(strcon))
-            {
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@val", value);
-                cmd.Parameters.AddWithValue("@id", id);
+            SqlConnection con = new SqlConnection(strcon);
+           SqlCommand cmd = new SqlCommand(query, con);
+           cmd.Parameters.AddWithValue("@val", value);
+           cmd.Parameters.AddWithValue("@id", id);
 
-                con.Open();
-                cmd.ExecuteNonQuery();
-            }
+           con.Open();
+           cmd.ExecuteNonQuery();
+            con.Close();
 
             gv_viewList.EditIndex = -1;
             ReloadData();
@@ -215,6 +206,8 @@ namespace WebApplication1.Admin
             else if (type == "properties")
                 query = "DELETE FROM Properties WHERE PropertyId=@id";
             else if (type == "users")
+                query = "DELETE FROM Users WHERE UserId=@id";
+            else if (type == "agents")
                 query = "DELETE FROM Users WHERE UserId=@id";
 
             if (query == "") return;
@@ -239,6 +232,7 @@ namespace WebApplication1.Admin
             else if (type == "states") LoadStates();
             else if (type == "cities") LoadCities();
             else if (type == "users") LoadUsers();
+            else if (type == "agents") LoadAgents();
         }
 
 
@@ -283,6 +277,10 @@ namespace WebApplication1.Admin
                 Response.Redirect("/Admin/AddState.aspx");
             else if (type == "properties")
                 Response.Redirect("/Admin/AddProperty.aspx");
+            else if (type == "users")
+                Response.Redirect("/Admin/AddUser.aspx");
+            else if (type == "agents")
+                Response.Redirect("/Admin/AddAgent.aspx");
         }
 
     }
