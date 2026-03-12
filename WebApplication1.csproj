@@ -103,6 +103,7 @@
     <Content Include="Properties.aspx" />
     <Content Include="PropertyDetails.aspx" />
     <Content Include="Register.aspx" />
+    <Content Include="Profile.aspx" />
     <Content Include="UserDashboard.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -269,6 +270,13 @@
     <Compile Include="Register.aspx.designer.cs">
       <DependentUpon>Register.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UserDashboard.aspx.cs">
       <DependentUpon>UserDashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -288,6 +296,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PropertyImages\" />
+    <Folder Include="User\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

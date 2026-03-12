@@ -61,11 +61,17 @@ namespace WebApplication1
             Session["role"] = role;
 
             if (role == "Admin")
+            {
                 Response.Redirect("/Admin/AdminDashboard.aspx");
+            }
             else if (role == "Agent")
+            {
                 Response.Redirect("/Agent/Dashboard.aspx");
+            }
             else
+            {
                 Response.Redirect("UserDashboard.aspx");
+            }
         }
 
         public bool ExistUser(String email)

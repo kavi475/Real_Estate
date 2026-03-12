@@ -5,7 +5,7 @@
 <head>
     <title>Contact - REMS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/HomeStyleSheet.css" />
+    <link rel="stylesheet" href="/CSS/HomeStyleSheet.css" />
     <style>
         .contact-hero {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
@@ -118,21 +118,25 @@
 <form id="form1" runat="server">
 
     <!-- NAVBAR -->
-    <nav class="navbar fixed-top" style="background:#f2f2f2; padding: 15px 40px; display:flex; justify-content:space-between; align-items:center; height:70px;">
-        <div class="title">
-            <h3>Real Estate Management System</h3>
-        </div>
-        <ul class="menu">
-            <li><a href="Home.aspx">Home</a></li>
-            <li><a href="About.aspx">About</a></li>
-            <li><a href="Properties.aspx">Properties</a></li>
-            <li><a href="Contact.aspx">Contact</a></li>
-        </ul>
-        <div class="auth">
-            <asp:Button ID="btnSignup" runat="server" Text="Sign Up" CssClass="loginBtn" OnClick="btnSignup_Click" />
-            <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="loginBtn" OnClick="btnLogin_Click" />
-        </div>
-    </nav>
+        <nav class="navbar fixed-top" style="background: #f2f2f2; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; height: 70px;">
+
+    <div class="title">
+        <h3>Real Estate Management System</h3>
+    </div>
+
+    <ul class="menu">
+        <li><a href="Home.aspx" class="nav-link">Home</a></li>
+        <li><a href="About.aspx" class="nav-link">About</a></li>
+        <li><a href="Properties.aspx" class="nav-link">Properties</a></li>
+        <li><a href="Contact.aspx" class="nav-link">Contact</a></li>
+    </ul>
+
+    <div class="auth">
+        <asp:Button ID="btnSignup" runat="server" Text="Sign Up" CssClass="loginBtn" OnClick="btnSignup_Click" />
+        <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="loginBtn" OnClick="btnLogin_Click" />
+    </div>
+
+</nav>
 
     <!-- CONTACT HERO -->
     <div class="contact-hero">

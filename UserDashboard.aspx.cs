@@ -11,17 +11,41 @@ namespace WebApplication1
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["email"] == null || Session["role"] == null)
+            if (Session["email"] == null)
             {
                 Response.Redirect("~/Login.aspx");
                 return;
             }
 
-            if (Session["role"].ToString() != "Customer")
+            if (!IsPostBack)
             {
-                Response.Redirect("~/Login.aspx");
-                return;
+                lblWelcome.Text = "Welcome, " + Session["email"].ToString();
+                ddlCity.Items.Add("Select City");
+                ddlCity.Items.Add("Surat");
+                ddlCity.Items.Add("Ahmedabad");
+                ddlCity.Items.Add("Mumbai");
+
+                ddlType.Items.Add("Select Property Type");
+                ddlType.Items.Add("Residential");
+                ddlType.Items.Add("Commercial");
+                ddlType.Items.Add("Land");
+
+                ddlStatus.Items.Add("Select Status");
+                ddlStatus.Items.Add("Available");
+                ddlStatus.Items.Add("Sold");
             }
+        }
+
+        protected void btnProfile_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Profile.aspx");
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Clear();
+            Session.Abandon();
+            Response.Redirect("Home.aspx");
         }
     }
 }

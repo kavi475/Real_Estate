@@ -45,6 +45,23 @@ body {
     gap: 15px;
     align-items: center;
 }
+
+input.loginBtn,
+input[type="submit"].loginBtn {
+    padding: 8px 20px !important;
+    background: #2ecc71 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+}
+
+    input.loginBtn:hover,
+    input[type="submit"].loginBtn:hover {
+        background: #27ae60 !important;
+    }
+
 /* ================= HERO ================= */
 
 .hero {
