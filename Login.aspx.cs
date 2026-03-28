@@ -11,16 +11,16 @@ namespace WebApplication1
 {
     public partial class Login : System.Web.UI.Page
     {
-
         String strcon = ConfigurationManager.ConnectionStrings["RealEstateDB"].ConnectionString;
+
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+
         }
 
         protected void btn_login_Click(object sender, EventArgs e)
         {
-            if(txt_email.Text == "" || txt_password.Text == "")
+            if (txt_email.Text == "" || txt_password.Text == "")
             {
                 lbl_message.Visible = true;
                 lbl_message.Text = "All fields are required";
@@ -48,7 +48,7 @@ namespace WebApplication1
                 return;
             }
 
-            if (!ChkPassword(txt_email.Text,txt_password.Text))
+            if (!ChkPassword(txt_email.Text, txt_password.Text))
             {
                 lbl_message.Visible = true;
                 lbl_message.Text = "Incorrect password";
@@ -70,26 +70,23 @@ namespace WebApplication1
             }
             else
             {
-                Response.Redirect("UserDashboard.aspx");
+                Response.Redirect("~/User/UserDashboard.aspx");
             }
         }
 
         public bool ExistUser(String email)
         {
             SqlConnection con = new SqlConnection(strcon);
-
             String query = "SELECT COUNT(*) FROM Users WHERE Email=@email";
             SqlCommand cmd = new SqlCommand(query, con);
             cmd.Parameters.AddWithValue("@email", email.Trim());
-
             con.Open();
             int count = Convert.ToInt32(cmd.ExecuteScalar());
             con.Close();
-
             return count > 0;
         }
 
-        public bool ChkPassword(String email,String password)
+        public bool ChkPassword(String email, String password)
         {
             SqlConnection con = new SqlConnection(strcon);
             String query = "SELECT COUNT(*) FROM Users WHERE Email=@email AND Password=@password";
@@ -112,43 +109,6 @@ namespace WebApplication1
             String role = cmd.ExecuteScalar().ToString();
             con.Close();
             return role;
-        }
-
-        public string GetRoleByEmail(string email)
-        {
-            SqlConnection con = new SqlConnection(strcon);
-
-            string query = "SELECT Role FROM Users WHERE Email=@email";
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@email", email);
-
-            con.Open();
-            object result = cmd.ExecuteScalar();
-            con.Close();
-
-            if (result != null)
-                return result.ToString();
-            else
-                return null;
-        }
-
-
-        protected void txt_email_TextChanged(object sender, EventArgs e)
-        {
-            String role = GetRoleByEmail(txt_email.Text);
-            ddl_role.Items.Clear();
-
-            if(role != null)
-            {
-                ddl_role.Items.Add(role);
-                ddl_role.Enabled = false;
-            }
-            else
-            {
-                ddl_role.Enabled = true;
-                ddl_role.Items.Add("Customer");
-                ddl_role.Items.Add("Agent");
-            }
         }
     }
 }

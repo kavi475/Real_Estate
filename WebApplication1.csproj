@@ -80,8 +80,10 @@
     <Content Include="Agent\Add-property.aspx" />
     <Content Include="Agent\Bookings.aspx" />
     <Content Include="Agent\Dashboard.aspx" />
+    <Content Include="Agent\EditProperty.aspx" />
     <Content Include="Agent\MyProperties.aspx" />
     <Content Include="Agent\Profile.aspx" />
+    <Content Include="Agent\PropertyDetail.aspx" />
     <Content Include="App_Data\RealEstateDB.mdf" />
     <Content Include="App_Data\RealEstateDB_log.ldf">
       <DependentUpon>RealEstateDB.mdf</DependentUpon>
@@ -104,7 +106,13 @@
     <Content Include="PropertyDetails.aspx" />
     <Content Include="Register.aspx" />
     <Content Include="Profile.aspx" />
-    <Content Include="UserDashboard.aspx" />
+    <Content Include="User\MyBookings.aspx" />
+    <Content Include="User\UserAbout.aspx" />
+    <Content Include="User\UserContact.aspx" />
+    <Content Include="User\UserProfile.aspx" />
+    <Content Include="User\UserProperties.aspx" />
+    <Content Include="User\PropertyDetail.aspx" />
+    <Content Include="User\UserDashboard.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +207,13 @@
     <Compile Include="Agent\Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Agent\EditProperty.aspx.cs">
+      <DependentUpon>EditProperty.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Agent\EditProperty.aspx.designer.cs">
+      <DependentUpon>EditProperty.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Agent\MyProperties.aspx.cs">
       <DependentUpon>MyProperties.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -212,6 +227,13 @@
     </Compile>
     <Compile Include="Agent\Profile.aspx.designer.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Agent\PropertyDetail.aspx.cs">
+      <DependentUpon>PropertyDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Agent\PropertyDetail.aspx.designer.cs">
+      <DependentUpon>PropertyDetail.aspx</DependentUpon>
     </Compile>
     <Compile Include="Contact.aspx.cs">
       <DependentUpon>Contact.aspx</DependentUpon>
@@ -277,11 +299,53 @@
     <Compile Include="Profile.aspx.designer.cs">
       <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
-    <Compile Include="UserDashboard.aspx.cs">
+    <Compile Include="User\MyBookings.aspx.cs">
+      <DependentUpon>MyBookings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\MyBookings.aspx.designer.cs">
+      <DependentUpon>MyBookings.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\UserAbout.aspx.cs">
+      <DependentUpon>UserAbout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\UserAbout.aspx.designer.cs">
+      <DependentUpon>UserAbout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\UserContact.aspx.cs">
+      <DependentUpon>UserContact.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\UserContact.aspx.designer.cs">
+      <DependentUpon>UserContact.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\UserProfile.aspx.cs">
+      <DependentUpon>UserProfile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\UserProfile.aspx.designer.cs">
+      <DependentUpon>UserProfile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\UserProperties.aspx.cs">
+      <DependentUpon>UserProperties.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\UserProperties.aspx.designer.cs">
+      <DependentUpon>UserProperties.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\PropertyDetail.aspx.cs">
+      <DependentUpon>PropertyDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="User\PropertyDetail.aspx.designer.cs">
+      <DependentUpon>PropertyDetail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="User\UserDashboard.aspx.cs">
       <DependentUpon>UserDashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="UserDashboard.aspx.designer.cs">
+    <Compile Include="User\UserDashboard.aspx.designer.cs">
       <DependentUpon>UserDashboard.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -296,7 +360,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PropertyImages\" />
-    <Folder Include="User\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

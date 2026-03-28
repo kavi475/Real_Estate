@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebApplication1
+namespace WebApplication1.User
 {
 
 
-    public partial class UserDashboard
+    public partial class UserProperties
     {
 
         /// <summary>
@@ -33,15 +33,6 @@ namespace WebApplication1
         protected global::System.Web.UI.WebControls.Label lblWelcome;
 
         /// <summary>
-        /// btnProfile control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnProfile;
-
-        /// <summary>
         /// btnLogout control.
         /// </summary>
         /// <remarks>
@@ -49,6 +40,24 @@ namespace WebApplication1
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnLogout;
+
+        /// <summary>
+        /// txtKeyword control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtKeyword;
+
+        /// <summary>
+        /// ddlState control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlState;
 
         /// <summary>
         /// ddlCity control.
@@ -60,15 +69,6 @@ namespace WebApplication1
         protected global::System.Web.UI.WebControls.DropDownList ddlCity;
 
         /// <summary>
-        /// ddlType control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlType;
-
-        /// <summary>
         /// ddlStatus control.
         /// </summary>
         /// <remarks>
@@ -78,6 +78,24 @@ namespace WebApplication1
         protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
 
         /// <summary>
+        /// txtMinPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMinPrice;
+
+        /// <summary>
+        /// txtMaxPrice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMaxPrice;
+
+        /// <summary>
         /// btnSearch control.
         /// </summary>
         /// <remarks>
@@ -85,5 +103,14 @@ namespace WebApplication1
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnSearch;
+
+        /// <summary>
+        /// rptProperties control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater rptProperties;
     }
 }

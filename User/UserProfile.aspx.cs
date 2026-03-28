@@ -2,25 +2,38 @@
 using System.Configuration;
 using System.Data.SqlClient;
 
-namespace WebApplication1.Agent
+namespace WebApplication1.User
 {
-    public partial class Profile : System.Web.UI.Page
+    public partial class UserProfile : System.Web.UI.Page
     {
         string strcon = ConfigurationManager.ConnectionStrings["RealEstateDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["email"] == null || Session["role"]?.ToString() != "Agent")
-            {
-                Response.Redirect("~/Login.aspx");
-                return;
-            }
-
+            if (Session["email"] == null) { Response.Redirect("/Login.aspx"); return; }
             if (!IsPostBack)
             {
-                // Load current email into textbox
-                txtEmail.Text = Session["email"].ToString();
+                lblWelcome.Text = "Hi, " + Session["email"].ToString();
+                LoadProfile();
             }
+        }
+
+        void LoadProfile()
+        {
+            string email = Session["email"].ToString();
+            SqlConnection con = new SqlConnection(strcon);
+            SqlCommand cmd = new SqlCommand(
+                "SELECT Email, Phone FROM Users WHERE Email = @email", con);
+            cmd.Parameters.AddWithValue("@email", email);
+            con.Open();
+            SqlDataReader dr = cmd.ExecuteReader();
+            if (dr.Read())
+            {
+                txtEmail.Text = dr["Email"].ToString();
+                txtPhone.Text = dr["Phone"] != DBNull.Value
+                    ? dr["Phone"].ToString() : "";
+            }
+            con.Close();
         }
 
         protected void btnUpdateEmail_Click(object sender, EventArgs e)
@@ -28,6 +41,7 @@ namespace WebApplication1.Agent
             string newEmail = txtEmail.Text.Trim();
             string phone = txtPhone.Text.Trim();
 
+            // Validate email
             if (newEmail == "" || !newEmail.Contains("@"))
             {
                 lblEmailMsg.ForeColor = System.Drawing.Color.Red;
@@ -35,11 +49,20 @@ namespace WebApplication1.Agent
                 return;
             }
 
+            // Validate phone — optional but if filled must be numeric
+            if (phone != "" && phone.Length < 10)
+            {
+                lblEmailMsg.ForeColor = System.Drawing.Color.Red;
+                lblEmailMsg.Text = "Please enter a valid phone number.";
+                return;
+            }
+
             string currentEmail = Session["email"].ToString();
 
+            // Check if new email already taken by another user
             SqlConnection con = new SqlConnection(strcon);
-            string checkQuery = "SELECT COUNT(*) FROM Users WHERE Email=@email AND Email != @current";
-            SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+            SqlCommand checkCmd = new SqlCommand(
+                "SELECT COUNT(*) FROM Users WHERE Email=@email AND Email != @current", con);
             checkCmd.Parameters.AddWithValue("@email", newEmail);
             checkCmd.Parameters.AddWithValue("@current", currentEmail);
             con.Open();
@@ -49,59 +72,60 @@ namespace WebApplication1.Agent
             if (count > 0)
             {
                 lblEmailMsg.ForeColor = System.Drawing.Color.Red;
-                lblEmailMsg.Text = "This email is already in use.";
+                lblEmailMsg.Text = "This email is already in use by another account.";
                 return;
             }
 
+            // Update email and phone
             SqlConnection con2 = new SqlConnection(strcon);
             SqlCommand cmd = new SqlCommand(
                 "UPDATE Users SET Email=@newEmail, Phone=@phone WHERE Email=@current", con2);
             cmd.Parameters.AddWithValue("@newEmail", newEmail);
-            cmd.Parameters.AddWithValue("@phone", phone);
+            cmd.Parameters.AddWithValue("@phone", phone == "" ? (object)DBNull.Value : phone);
             cmd.Parameters.AddWithValue("@current", currentEmail);
             con2.Open();
             cmd.ExecuteNonQuery();
             con2.Close();
 
+            // Update session
             Session["email"] = newEmail;
+            lblWelcome.Text = "Hi, " + newEmail;
+
             lblEmailMsg.ForeColor = System.Drawing.Color.Green;
             lblEmailMsg.Text = "Profile updated successfully.";
         }
+
         protected void btnChangePassword_Click(object sender, EventArgs e)
         {
-            string currentPassword = txtCurrentPassword.Text.Trim();
-            string newPassword = txtNewPassword.Text.Trim();
-            string confirmPassword = txtConfirmPassword.Text.Trim();
+            string current = txtCurrentPassword.Text.Trim();
+            string newPass = txtNewPassword.Text.Trim();
+            string confirm = txtConfirmPassword.Text.Trim();
 
-            if (currentPassword == "" || newPassword == "" || confirmPassword == "")
+            if (current == "" || newPass == "" || confirm == "")
             {
                 lblPasswordMsg.ForeColor = System.Drawing.Color.Red;
                 lblPasswordMsg.Text = "All fields are required.";
                 return;
             }
-
-            if (newPassword.Length < 7 || newPassword.Length > 14)
+            if (newPass.Length < 7 || newPass.Length > 14)
             {
                 lblPasswordMsg.ForeColor = System.Drawing.Color.Red;
-                lblPasswordMsg.Text = "New password must be between 7 and 14 characters.";
+                lblPasswordMsg.Text = "Password must be 7-14 characters.";
                 return;
             }
-
-            if (newPassword != confirmPassword)
+            if (newPass != confirm)
             {
                 lblPasswordMsg.ForeColor = System.Drawing.Color.Red;
-                lblPasswordMsg.Text = "New password and confirm password do not match.";
+                lblPasswordMsg.Text = "Passwords do not match.";
                 return;
             }
 
             string email = Session["email"].ToString();
-
-            // Check current password is correct
             SqlConnection con = new SqlConnection(strcon);
-            string checkQuery = "SELECT COUNT(*) FROM Users WHERE Email=@email AND Password=@password";
-            SqlCommand checkCmd = new SqlCommand(checkQuery, con);
+            SqlCommand checkCmd = new SqlCommand(
+                "SELECT COUNT(*) FROM Users WHERE Email=@email AND Password=@pass", con);
             checkCmd.Parameters.AddWithValue("@email", email);
-            checkCmd.Parameters.AddWithValue("@password", currentPassword);
+            checkCmd.Parameters.AddWithValue("@pass", current);
             con.Open();
             int count = Convert.ToInt32(checkCmd.ExecuteScalar());
             con.Close();
@@ -113,38 +137,26 @@ namespace WebApplication1.Agent
                 return;
             }
 
-            // Update password
             SqlConnection con2 = new SqlConnection(strcon);
-            string updateQuery = "UPDATE Users SET Password=@newPassword WHERE Email=@email";
-            SqlCommand updateCmd = new SqlCommand(updateQuery, con2);
-            updateCmd.Parameters.AddWithValue("@newPassword", newPassword);
-            updateCmd.Parameters.AddWithValue("@email", email);
+            SqlCommand cmd = new SqlCommand(
+                "UPDATE Users SET Password=@newPass WHERE Email=@email", con2);
+            cmd.Parameters.AddWithValue("@newPass", newPass);
+            cmd.Parameters.AddWithValue("@email", email);
             con2.Open();
-            updateCmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
             con2.Close();
 
             lblPasswordMsg.ForeColor = System.Drawing.Color.Green;
             lblPasswordMsg.Text = "Password changed successfully.";
-
             txtCurrentPassword.Text = "";
             txtNewPassword.Text = "";
             txtConfirmPassword.Text = "";
         }
 
-        void LoadProfile()
+        protected void btnLogout_Click(object sender, EventArgs e)
         {
-            string email = Session["email"].ToString();
-            SqlConnection con = new SqlConnection(strcon);
-            SqlCommand cmd = new SqlCommand("SELECT Email, Phone FROM Users WHERE Email=@email", con);
-            cmd.Parameters.AddWithValue("@email", email);
-            con.Open();
-            SqlDataReader dr = cmd.ExecuteReader();
-            if (dr.Read())
-            {
-                txtEmail.Text = dr["Email"].ToString();
-                txtPhone.Text = dr["Phone"] != DBNull.Value ? dr["Phone"].ToString() : "";
-            }
-            con.Close();
+            Session.Clear(); Session.Abandon();
+            Response.Redirect("/Login.aspx");
         }
     }
 }
