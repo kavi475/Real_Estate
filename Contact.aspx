@@ -121,7 +121,7 @@
         <nav class="navbar fixed-top" style="background: #f2f2f2; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; height: 70px;">
 
     <div class="title">
-        <h3>Real Estate Management System</h3>
+         <h3 style="font-size:20px; font-weight:600; margin:0; color:#000;">Real Estate Management System</h3>
     </div>
 
     <ul class="menu">

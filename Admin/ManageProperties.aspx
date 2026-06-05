@@ -1,271 +1,224 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ManageProperties.aspx.cs" Inherits="WebApplication1.Admin.ManageProperties" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true"
+    CodeBehind="ManageProperties.aspx.cs"
+    Inherits="WebApplication1.Admin.ManageProperties" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Manage Properties - REMS</title>
+    <title>Manage Properties</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Your Dashboard CSS -->
+    <link rel="stylesheet" href="/css/AdminDashboard.css" />
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #1e1e2f;
+        .main { margin-left: 260px; padding: 25px; }
+
+        .btn-approve { background:#2ecc71; color:#fff; border:none; padding:6px 12px; border-radius:5px; }
+        .btn-reject  { background:#f39c12; color:#fff; border:none; padding:6px 12px; border-radius:5px; }
+        .btn-delete  { background:#e74c3c; color:#fff; border:none; padding:6px 12px; border-radius:5px; }
+
+        /* Custom Reject Modal Overlay */
+        #rejectOverlay {
+            display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            padding-top: 20px;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
         }
-        .logo {
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 22px;
-            font-weight: bold;
+        #rejectOverlay.show {
+            display: flex;
         }
-        .sidebar a {
-            display: block;
-            color: #ddd;
-            padding: 12px 20px;
-            text-decoration: none;
-            font-size: 15px;
-        }
-        .sidebar a:hover, .sidebar a.active {
-            background: #667eea;
-            color: white;
-        }
-        .main-content {
-            margin-left: 220px;
+        #rejectBox {
+            background: #fff;
+            border-radius: 8px;
             padding: 30px;
-            background: #f4f6f9;
-            min-height: 100vh;
+            width: 450px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        .page-header h2 {
-            font-size: 26px;
-            color: #2f3640;
-        }
-        .btn-add {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .btn-add:hover {
-            background: #5a67d8;
-            color: white;
-        }
-        .search-bar {
-            background: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .search-input {
-            flex: 1;
-            padding: 10px 16px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            height: 42px;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .btn-search {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            height: 42px;
-            width: auto;
-            white-space: nowrap;
-        }
-        .btn-search:hover { background: #5a67d8; color: white; }
-        .table-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-            overflow: hidden;
-        }
-        .table-card table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .table-card thead {
-            background: #1e1e2f;
-            color: white;
-        }
-        .table-card thead th {
-            padding: 14px 16px;
-            font-size: 14px;
+        #rejectBox h5 {
+            margin-bottom: 15px;
             font-weight: 600;
         }
-        .table-card tbody tr {
-            border-bottom: 1px solid #f0f0f0;
-            transition: 0.2s;
-        }
-        .table-card tbody tr:hover { background: #f8f9ff; }
-        .table-card tbody td {
-            padding: 13px 16px;
+        #rejectBox textarea {
+            width: 100%;
+            height: 100px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
             font-size: 14px;
-            color: #444;
         }
-        .badge-pending {
-            background: #fff3cd;
-            color: #856404;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+        #rejectBox .modal-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
         }
-        .badge-approved {
-            background: #d4edda;
-            color: #155724;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .badge-rejected {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .btn-approve {
-            background: #2ecc71;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-right: 3px;
-        }
-        .btn-reject {
-            background: #e67e22;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-right: 3px;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .btn-approve:hover { background: #27ae60; }
-        .btn-reject:hover { background: #d35400; }
-        .btn-delete:hover { background: #c0392b; }
     </style>
 </head>
-<body>
-<form id="form1" runat="server">
 
-    <!-- SIDEBAR -->
+<body>
+<form runat="server">
+
+    <!-- ================= SIDEBAR ================= -->
     <div class="sidebar">
         <h2 class="logo">REMS</h2>
         <a href="AdminDashboard.aspx">Dashboard</a>
-        <a href="ManageProperties.aspx" class="active">Properties</a>
+        <a href="ManageProperties.aspx">Properties</a>
         <a href="ManageUsers.aspx">Users</a>
         <a href="ManageBookings.aspx">Bookings</a>
+        <a href="ApproveAgents.aspx">Approve Agents</a>
+        <a href="FinancialManagement.aspx">Financial Management</a>
         <a href="../Logout.aspx">Logout</a>
     </div>
+    <!-- =========================================== -->
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
+    <div class="main">
 
-        <!-- HEADER -->
-        <div class="page-header">
-            <h2>Manage Properties</h2>
-            <a href="AddProperty.aspx" class="btn-add">+ Add Property</a>
-        </div>
+        <h2>Manage Properties</h2>
+        <asp:Label ID="lblMessage" runat="server"></asp:Label>
 
-        <!-- SEARCH BAR -->
-        <div class="search-bar">
-            <asp:TextBox ID="txtSearch" runat="server"
-                CssClass="search-input"
-                placeholder="Search by title or location..."></asp:TextBox>
-            <asp:Button ID="btnSearch" runat="server"
-                Text="🔍 Search"
-                CssClass="btn-search"
-                OnClick="btnSearch_Click" />
-        </div>
+        <!-- Hidden Fields -->
+        <asp:HiddenField ID="hfRejectPropertyId" runat="server" />
+        <asp:HiddenField ID="hfKeepModalOpen"    runat="server" Value="0" />
 
-        <!-- TABLE -->
-        <div class="table-card">
-            <asp:GridView ID="gvProperties" runat="server"
-                AutoGenerateColumns="false"
-                CssClass="table"
-                OnRowCommand="gvProperties_RowCommand"
-                DataKeyNames="PropertyId"
-                EmptyDataText="No properties found.">
-                <Columns>
-                    <asp:BoundField DataField="PropertyId" HeaderText="ID" />
-                    <asp:BoundField DataField="Title" HeaderText="Title" />
-                    <asp:BoundField DataField="Location" HeaderText="Location" />
-                    <asp:BoundField DataField="Price" HeaderText="Price (₹)" />
-                    <asp:BoundField DataField="Status" HeaderText="Status" />
-                    <asp:TemplateField HeaderText="Approval">
-                        <ItemTemplate>
-                            <span class='<%# Eval("IsApproved").ToString() == "Approved" ? "badge-approved" : Eval("IsApproved").ToString() == "Rejected" ? "badge-rejected" : "badge-pending" %>'>
-                                <%# Eval("IsApproved") %>
-                            </span>
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Actions">
-                        <ItemTemplate>
-                            <asp:Button ID="btnApprove" runat="server"
-                                Text="Approve"
-                                CssClass="btn-approve"
-                                CommandName="Approve"
-                                CommandArgument='<%# Eval("PropertyId") %>' />
-                            <asp:Button ID="btnReject" runat="server"
-                                Text="Reject"
-                                CssClass="btn-reject"
-                                CommandName="Reject"
-                                CommandArgument='<%# Eval("PropertyId") %>' />
-                            <asp:Button ID="btnDelete" runat="server"
-                                Text="Delete"
-                                CssClass="btn-delete"
-                                CommandName="DeleteProp"
-                                CommandArgument='<%# Eval("PropertyId") %>' />
-                        </ItemTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
-        </div>
+        <hr />
+
+        <!-- AVAILABLE / PENDING -->
+        <h4>Available &amp; Pending Properties</h4>
+
+        <asp:GridView ID="gvAvailable" runat="server"
+            AutoGenerateColumns="False"
+            CssClass="table table-bordered"
+            DataKeyNames="PropertyId"
+            OnRowCommand="gvAvailable_RowCommand">
+            <Columns>
+                <asp:BoundField DataField="PropertyId" HeaderText="ID" />
+                <asp:BoundField DataField="Title"      HeaderText="Title" />
+                <asp:BoundField DataField="AgentName"  HeaderText="Agent Name" />
+                <asp:BoundField DataField="Price"      HeaderText="Price" DataFormatString="₹{0:N2}" />
+                <asp:BoundField DataField="Status"     HeaderText="Status" />
+
+                <asp:TemplateField HeaderText="Actions">
+                    <ItemTemplate>
+                        <asp:LinkButton runat="server"
+                            Text="Approve"
+                            CssClass="btn-approve"
+                            CommandName="Approve"
+                            CommandArgument='<%# Eval("PropertyId") %>' />
+
+                        <%-- Reject: pure client-side, NO postback --%>
+                        <button type="button"
+                            class="btn-reject"
+                            onclick="openRejectBox('<%# Eval("PropertyId") %>')">
+                            Reject
+                        </button>
+
+                        <asp:LinkButton runat="server"
+                            Text="Delete"
+                            CssClass="btn-delete"
+                            CommandName="DeleteProperty"
+                            CommandArgument='<%# Eval("PropertyId") %>'
+                            OnClientClick="return confirm('Are you sure you want to delete this property?');" />
+                    </ItemTemplate>
+                </asp:TemplateField>
+            </Columns>
+        </asp:GridView>
+
+        <hr />
+
+        <!-- BOOKED -->
+        <h4>Booked Properties</h4>
+        <asp:GridView ID="gvBooked" runat="server"
+            AutoGenerateColumns="False"
+            CssClass="table table-bordered">
+            <Columns>
+                <asp:BoundField DataField="PropertyId"  HeaderText="ID" />
+                <asp:BoundField DataField="Title"       HeaderText="Title" />
+                <asp:BoundField DataField="Email"       HeaderText="Booked By" />
+                <asp:BoundField DataField="BookingDate" HeaderText="Date" />
+            </Columns>
+        </asp:GridView>
+
+        <hr />
+
+        <!-- REJECTED -->
+        <h4>Rejected Properties</h4>
+        <asp:GridView ID="gvRejected" runat="server"
+            AutoGenerateColumns="False"
+            CssClass="table table-bordered">
+            <Columns>
+                <asp:BoundField DataField="PropertyId"    HeaderText="ID" />
+                <asp:BoundField DataField="Title"         HeaderText="Title" />
+                <asp:BoundField DataField="AgentName"     HeaderText="Agent Name" />
+                <asp:BoundField DataField="Price"         HeaderText="Price" DataFormatString="₹{0:N2}" />
+                <asp:BoundField DataField="Status"        HeaderText="Status" />
+                <asp:BoundField DataField="RejectionReason" HeaderText="Rejection Reason" />
+            </Columns>
+        </asp:GridView>
 
     </div>
 
+    <!-- ================= REJECT OVERLAY (Pure HTML — no Bootstrap modal) ================= -->
+    <div id="rejectOverlay">
+        <div id="rejectBox">
+            <h5>Reject Property</h5>
+            <label>Rejection Reason <span style="color:red">*</span></label>
+            <textarea id="txtReasonClient" placeholder="Enter reason..."></textarea>
+            <p id="rejectClientError" style="color:red; margin-top:6px; display:none;">
+                Rejection reason is required.
+            </p>
+            <div class="modal-actions">
+                <button type="button"
+                    class="btn btn-secondary"
+                    onclick="closeRejectBox()">Cancel</button>
+                <button type="button"
+                    class="btn btn-danger"
+                    onclick="submitReject()">Reject Property</button>
+            </div>
+        </div>
+    </div>
+    <!-- =================================================================================== -->
+
+    <%-- Hidden ASP controls to carry reason + trigger server postback --%>
+    <asp:HiddenField ID="hfRejectReason" runat="server" />
+    <asp:Button ID="btnDoReject"
+        runat="server"
+        Style="display:none"
+        OnClick="btnDoReject_Click" />
+
 </form>
+
+<script>
+    function openRejectBox(propertyId) {
+        document.getElementById('<%= hfRejectPropertyId.ClientID %>').value = propertyId;
+        document.getElementById('txtReasonClient').value = '';
+        document.getElementById('rejectClientError').style.display = 'none';
+        document.getElementById('rejectOverlay').classList.add('show');
+    }
+
+    function closeRejectBox() {
+        document.getElementById('rejectOverlay').classList.remove('show');
+    }
+
+    function submitReject() {
+        var reason = document.getElementById('txtReasonClient').value.trim();
+        if (!reason) {
+            document.getElementById('rejectClientError').style.display = 'block';
+            return;
+        }
+        // Pass reason to hidden field then click the hidden server button
+        document.getElementById('<%= hfRejectReason.ClientID %>').value = reason;
+        document.getElementById('<%= btnDoReject.ClientID %>').click();
+    }
+</script>
+
 </body>
 </html>

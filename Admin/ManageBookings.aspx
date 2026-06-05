@@ -225,11 +225,14 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <h2 class="logo">REMS</h2>
-            <a href="AdminDashboard.aspx">Dashboard</a>
-            <a href="ManageProperties.aspx">Properties</a>
-            <a href="ManageUsers.aspx">Users</a>
-            <a href="ManageBookings.aspx" class="active">Bookings</a>
-            <a href="../Logout.aspx">Logout</a>
+            
+        <a href="AdminDashboard.aspx">Dashboard</a>
+        <a href="ManageProperties.aspx">Properties</a>
+        <a href="ManageUsers.aspx">Users</a>
+        <a href="ManageBookings.aspx">Bookings</a>
+        <a href="ApproveAgents.aspx">Approve Agents</a>
+        <a href="FinancialManagement.aspx">Financial Mangment</a>
+        <a href="../Logout.aspx">Logout</a>
         </div>
 
         <!-- MAIN CONTENT -->

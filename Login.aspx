@@ -10,6 +10,7 @@
         <h1>Sign In</h1>
         <form id="form1" runat="server">
             <table border="0">
+
                 <!-- Email -->
                 <tr>
                     <td>
@@ -20,6 +21,7 @@
                         </asp:TextBox>
                     </td>
                 </tr>
+
                 <!-- Password -->
                 <tr>
                     <td>
@@ -31,6 +33,7 @@
                         </asp:TextBox>
                     </td>
                 </tr>
+
                 <!-- Login Button -->
                 <tr>
                     <td>
@@ -41,6 +44,7 @@
                             OnClick="btn_login_Click" />
                     </td>
                 </tr>
+
                 <!-- Register -->
                 <tr>
                     <td>
@@ -48,16 +52,18 @@
                         <a href="Register.aspx" id="link_reigster">Register</a>
                     </td>
                 </tr>
+
                 <!-- Message -->
                 <tr>
                     <td>
                         <asp:Label 
                             ID="lbl_message" 
                             runat="server" 
-                            Visible="False">
+                            Visible="true">
                         </asp:Label>
                     </td>
                 </tr>
+
             </table>
         </form>
     </div>

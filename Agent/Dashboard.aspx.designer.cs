@@ -60,6 +60,24 @@ namespace WebApplication1.Agent
         protected global::System.Web.UI.WebControls.Label lblBookings;
 
         /// <summary>
+        /// lblTotalRevenue control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTotalRevenue;
+
+        /// <summary>
+        /// lblCommission control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCommission;
+
+        /// <summary>
         /// gvRecentProperties control.
         /// </summary>
         /// <remarks>

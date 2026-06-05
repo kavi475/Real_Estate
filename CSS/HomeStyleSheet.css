@@ -30,6 +30,14 @@ body {
     align-items: center;
 }
 
+.navbar .title h3 {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    color: #000 !important;
+}
+
     .menu .nav-link {
         text-decoration: none;
         color: black;

@@ -4,8 +4,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Property Details - REMS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/CSS/HomeStyleSheet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
     <style>
         .detail-section {
             margin-top: 100px;
@@ -134,7 +135,7 @@
         <nav class="navbar fixed-top" style="background: #f2f2f2; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; height: 70px;">
 
             <div class="title">
-                <h3>Real Estate Management System</h3>
+                 <h3 style="font-size:20px; font-weight:600; margin:0; color:#000;">Real Estate Management System</h3>
             </div>
 
             <ul class="menu">

@@ -8,7 +8,7 @@ namespace WebApplication1.Agent
 {
     public partial class MyProperties : System.Web.UI.Page
     {
-        string strcon = ConfigurationManager.ConnectionStrings["RealEstateDB"].ConnectionString;
+        private readonly string strcon = ConfigurationManager.ConnectionStrings["RealEstateDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -20,49 +20,125 @@ namespace WebApplication1.Agent
 
             if (!IsPostBack)
             {
-                LoadProperties();
+                RefreshAllGrids();
             }
         }
 
-        int GetAgentId()
+        private int GetAgentId()
         {
+            if (Session["AgentId"] != null)
+            {
+                return Convert.ToInt32(Session["AgentId"]);
+            }
+
             string email = Session["email"].ToString();
-            SqlConnection con = new SqlConnection(strcon);
-            string query = "SELECT UserId FROM Users WHERE Email = @email";
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@email", email);
-            con.Open();
-            int agentId = Convert.ToInt32(cmd.ExecuteScalar());
-            con.Close();
-            return agentId;
+            using (SqlConnection con = new SqlConnection(strcon))
+            {
+                string query = "SELECT UserId FROM Users WHERE Email = @email";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@email", email);
+                    con.Open();
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        int agentId = Convert.ToInt32(result);
+                        Session["AgentId"] = agentId;
+                        return agentId;
+                    }
+                }
+            }
+            Response.Redirect("~/Login.aspx");
+            return 0;
         }
 
-        void LoadProperties()
+        private void RefreshAllGrids()
         {
             int agentId = GetAgentId();
-            SqlConnection con = new SqlConnection(strcon);
+            LoadApprovedProperties(agentId);
+            LoadPendingProperties(agentId);
+            LoadRejectedProperties(agentId);
+        }
 
-            // Gets property details + first image for each property
-            string query = @"
-                SELECT 
-                    p.PropertyId, p.Title, p.Location, p.Price, p.Status, p.IsApproved,
-                    (SELECT TOP 1 ImagePath FROM PropertyImages 
-                     WHERE PropertyId = p.PropertyId) AS ImagePath
-                FROM Properties p
-                WHERE p.AgentId = @agentId
-                ORDER BY p.PropertyId DESC";
+        private void LoadApprovedProperties(int agentId)
+        {
+            using (SqlConnection con = new SqlConnection(strcon))
+            {
+                string query = @"
+                    SELECT 
+                        p.PropertyId, p.Title, p.Location, p.Price, p.Status,
+                        (SELECT TOP 1 ImagePath FROM PropertyImages 
+                         WHERE PropertyId = p.PropertyId) AS ImagePath
+                    FROM Properties p
+                    WHERE p.AgentId = @agentId AND p.Status = 'Approved'
+                    ORDER BY p.PropertyId DESC";
 
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@agentId", agentId);
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@agentId", agentId);
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        gvApprovedProperties.DataSource = dt;
+                        gvApprovedProperties.DataBind();
+                    }
+                }
+            }
+        }
 
-            con.Open();
-            SqlDataAdapter sda = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            sda.Fill(dt);
-            con.Close();
+        private void LoadPendingProperties(int agentId)
+        {
+            using (SqlConnection con = new SqlConnection(strcon))
+            {
+                string query = @"
+                    SELECT 
+                        p.PropertyId, p.Title, p.Location, p.Price, p.Status,
+                        (SELECT TOP 1 ImagePath FROM PropertyImages 
+                         WHERE PropertyId = p.PropertyId) AS ImagePath
+                    FROM Properties p
+                    WHERE p.AgentId = @agentId AND p.Status = 'Pending'
+                    ORDER BY p.PropertyId DESC";
 
-            gvProperties.DataSource = dt;
-            gvProperties.DataBind();
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@agentId", agentId);
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        gvPendingProperties.DataSource = dt;
+                        gvPendingProperties.DataBind();
+                    }
+                }
+            }
+        }
+
+        private void LoadRejectedProperties(int agentId)
+        {
+            using (SqlConnection con = new SqlConnection(strcon))
+            {
+                string query = @"
+                    SELECT 
+                        p.PropertyId, p.Title, p.Location, p.Price, p.Status, p.RejectionReason,
+                        (SELECT TOP 1 ImagePath FROM PropertyImages 
+                         WHERE PropertyId = p.PropertyId) AS ImagePath
+                    FROM Properties p
+                    WHERE p.AgentId = @agentId AND p.Status = 'Rejected'
+                    ORDER BY p.PropertyId DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@agentId", agentId);
+                    using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        sda.Fill(dt);
+                        gvRejectedProperties.DataSource = dt;
+                        gvRejectedProperties.DataBind();
+                    }
+                }
+            }
         }
 
         protected void gvProperties_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -71,31 +147,71 @@ namespace WebApplication1.Agent
             {
                 int propertyId = Convert.ToInt32(e.CommandArgument);
 
-                SqlConnection con = new SqlConnection(strcon);
-                con.Open();
+                using (SqlConnection con = new SqlConnection(strcon))
+                {
+                    con.Open();
+                    using (SqlTransaction trans = con.BeginTransaction())
+                    {
+                        try
+                        {
+                            using (SqlCommand cmd = new SqlCommand("DELETE FROM PropertyImages WHERE PropertyId = @pid", con, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@pid", propertyId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                // Delete images first (foreign key)
-                SqlCommand delImages = new SqlCommand(
-                    "DELETE FROM PropertyImages WHERE PropertyId = @pid", con);
-                delImages.Parameters.AddWithValue("@pid", propertyId);
-                delImages.ExecuteNonQuery();
+                            using (SqlCommand cmd = new SqlCommand(@"
+                                IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Bookings]') AND type in (N'U'))
+                                    DELETE FROM Bookings WHERE PropertyId = @pid;", con, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@pid", propertyId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                // Delete bookings linked to property
-                SqlCommand delBookings = new SqlCommand(
-                    "DELETE FROM Bookings WHERE PropertyId = @pid", con);
-                delBookings.Parameters.AddWithValue("@pid", propertyId);
-                delBookings.ExecuteNonQuery();
+                            using (SqlCommand cmd = new SqlCommand(@"
+                                IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Reviews]') AND type in (N'U'))
+                                    DELETE FROM Reviews WHERE PropertyId = @pid;", con, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@pid", propertyId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                // Delete the property
-                SqlCommand delProp = new SqlCommand(
-                    "DELETE FROM Properties WHERE PropertyId = @pid", con);
-                delProp.Parameters.AddWithValue("@pid", propertyId);
-                delProp.ExecuteNonQuery();
+                            using (SqlCommand cmd = new SqlCommand(@"
+                                IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Wishlist]') AND type in (N'U'))
+                                    DELETE FROM Wishlist WHERE PropertyId = @pid;", con, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@pid", propertyId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                con.Close();
+                            using (SqlCommand cmd = new SqlCommand(@"
+                                IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Inquiries]') AND type in (N'U'))
+                                    DELETE FROM Inquiries WHERE PropertyId = @pid;", con, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@pid", propertyId);
+                                cmd.ExecuteNonQuery();
+                            }
 
-                lblMsg.Text = "Property deleted successfully.";
-                LoadProperties();
+                            using (SqlCommand cmd = new SqlCommand("DELETE FROM Properties WHERE PropertyId = @pid", con, trans))
+                            {
+                                cmd.Parameters.AddWithValue("@pid", propertyId);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            trans.Commit();
+                            lblMsg.Text = "Property deleted successfully.";
+                            lblMsg.ForeColor = System.Drawing.Color.Green;
+                        }
+                        catch (Exception ex)
+                        {
+                            trans.Rollback();
+                            lblMsg.Text = "Error deleting property: " + ex.Message;
+                            lblMsg.ForeColor = System.Drawing.Color.Red;
+                        }
+                    }
+                }
+
+                RefreshAllGrids();
             }
         }
     }

@@ -6,6 +6,7 @@
 <head runat="server">
     <title>Register</title>
     <link rel="stylesheet" href="/css/Register.css" />
+     <link rel="stylesheet" href="CSS/login.css" />
 </head>
 
 <body>
@@ -18,8 +19,8 @@
                 <!-- Email -->
                 <tr>
                     <td>
-                        <asp:TextBox 
-                            ID="txt_email" 
+                        <asp:TextBox
+                            ID="txt_email"
                             runat="server"
                             Placeholder="Enter your email">
                         </asp:TextBox>
@@ -29,8 +30,8 @@
                 <!-- Password -->
                 <tr>
                     <td>
-                        <asp:TextBox 
-                            ID="txt_password" 
+                        <asp:TextBox
+                            ID="txt_password"
                             runat="server"
                             TextMode="Password"
                             Placeholder="Enter your password">
@@ -41,8 +42,8 @@
                 <!-- Confirm Password -->
                 <tr>
                     <td>
-                        <asp:TextBox 
-                            ID="txt_cpassword" 
+                        <asp:TextBox
+                            ID="txt_cpassword"
                             runat="server"
                             TextMode="Password"
                             Placeholder="Confirm your password">
@@ -54,9 +55,7 @@
                 <tr>
                     <td>
                         <asp:DropDownList ID="ddl_role" runat="server">
-                            <asp:ListItem Text="-- Select Role --" Value=""></asp:ListItem>
                             <asp:ListItem>Customer</asp:ListItem>
-                            <asp:ListItem>Admin</asp:ListItem>
                             <asp:ListItem>Agent</asp:ListItem>
                         </asp:DropDownList>
                     </td>
@@ -65,20 +64,26 @@
                 <!-- Register Button -->
                 <tr>
                     <td>
-                        <asp:Button 
-                            ID="btn_register" 
-                            runat="server" 
-                            Text="Register" 
+                        <asp:Button
+                            ID="btn_register"
+                            runat="server"
+                            Text="Register"
                             OnClick="btn_register_Click" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Already have an account?
+        <a href="login.aspx" id="link_reigster">Log In</a>
                     </td>
                 </tr>
 
                 <!-- Message -->
                 <tr>
                     <td>
-                        <asp:Label 
-                            ID="lbl_message" 
-                            runat="server" 
+                        <asp:Label
+                            ID="lbl_message"
+                            runat="server"
                             Visible="False">
                         </asp:Label>
                     </td>

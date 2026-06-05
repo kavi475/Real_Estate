@@ -19,9 +19,14 @@
             <a href="../Logout.aspx">Logout</a>
         </div>
         <div class="main">
-            <div class="content">
+            <div class="content" style="padding: 20px;">
                 <h1>My Properties</h1>
-                <asp:GridView ID="gvProperties" runat="server"
+                
+                <asp:Label ID="lblMsg" runat="server" style="color:green; margin-bottom:15px; display:block; font-weight:bold;"></asp:Label>
+
+                <!-- APPROVED PROPERTIES -->
+                <h3 style="color: #2ecc71;">Approved Properties</h3>
+                <asp:GridView ID="gvApprovedProperties" runat="server"
                     CssClass="table"
                     AutoGenerateColumns="false"
                     OnRowCommand="gvProperties_RowCommand">
@@ -30,36 +35,117 @@
                             <ItemTemplate>
                                 <img src='/<%# Eval("ImagePath") %>'
                                      width="80" height="60"
-                                     style="border-radius:6px; object-fit:cover;" />
+                                     style="border-radius:6px; object-fit:cover;" 
+                                     onerror="this.src='/images/no-image.png';" />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="Title" HeaderText="Title" />
                         <asp:BoundField DataField="Location" HeaderText="Location" />
-                        <asp:BoundField DataField="Price" HeaderText="Price" />
+                        <asp:BoundField DataField="Price" HeaderText="Price" DataFormatString="₹{0:N2}" />
                         <asp:BoundField DataField="Status" HeaderText="Status" />
-                        <asp:BoundField DataField="IsApproved" HeaderText="Approval" />
                         <asp:TemplateField HeaderText="Action">
                             <ItemTemplate>
                                 <a href='PropertyDetail.aspx?id=<%# Eval("PropertyId") %>'
-                                   style="color:green; margin-right:10px;">
+                                   style="color:green; margin-right:10px; font-weight:bold;">
                                     View
                                 </a>
-                                <a href='EditProperty.aspx?id=<%# Eval("PropertyId") %>'
-                                   style="color:blue; margin-right:10px;">
+                                <a href='Add-property.aspx?propertyId=<%# Eval("PropertyId") %>'
+                                   style="color:blue; margin-right:10px; font-weight:bold;">
                                     Edit
                                 </a>
                                 <asp:LinkButton ID="btnDelete" runat="server"
                                     CommandName="DeleteProperty"
                                     CommandArgument='<%# Eval("PropertyId") %>'
                                     OnClientClick="return confirm('Are you sure you want to delete this property?');"
-                                    style="color:red;">
+                                    style="color:red; font-weight:bold;">
                                     Delete
                                 </asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
                 </asp:GridView>
-                <asp:Label ID="lblMsg" runat="server" style="color:green; margin-top:10px; display:block;"></asp:Label>
+
+                <br /><br />
+
+                <!-- PENDING PROPERTIES -->
+                <h3 style="color: #f39c12;">Pending Properties (Under Review)</h3>
+                <asp:GridView ID="gvPendingProperties" runat="server"
+                    CssClass="table"
+                    AutoGenerateColumns="false"
+                    OnRowCommand="gvProperties_RowCommand">
+                    <Columns>
+                        <asp:TemplateField HeaderText="Image">
+                            <ItemTemplate>
+                                <img src='/<%# Eval("ImagePath") %>'
+                                     width="80" height="60"
+                                     style="border-radius:6px; object-fit:cover;" 
+                                     onerror="this.src='/images/no-image.png';" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="Title" HeaderText="Title" />
+                        <asp:BoundField DataField="Location" HeaderText="Location" />
+                        <asp:BoundField DataField="Price" HeaderText="Price" DataFormatString="₹{0:N2}" />
+                        <asp:BoundField DataField="Status" HeaderText="Status" />
+                        <asp:TemplateField HeaderText="Action">
+                            <ItemTemplate>
+                                <a href='PropertyDetail.aspx?id=<%# Eval("PropertyId") %>'
+                                   style="color:green; margin-right:10px; font-weight:bold;">
+                                    View
+                                </a>
+                                <a href='Add-property.aspx?propertyId=<%# Eval("PropertyId") %>'
+                                   style="color:blue; margin-right:10px; font-weight:bold;">
+                                    Edit
+                                </a>
+                                <asp:LinkButton ID="btnDelete" runat="server"
+                                    CommandName="DeleteProperty"
+                                    CommandArgument='<%# Eval("PropertyId") %>'
+                                    OnClientClick="return confirm('Are you sure you want to delete this property?');"
+                                    style="color:red; font-weight:bold;">
+                                    Delete
+                                </asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+
+                <br /><br />
+
+                <!-- REJECTED PROPERTIES -->
+                <h3 style="color: #d9534f;">Rejected Properties (Action Required)</h3>
+                <asp:GridView ID="gvRejectedProperties" runat="server"
+                    CssClass="table"
+                    AutoGenerateColumns="false"
+                    OnRowCommand="gvProperties_RowCommand">
+                    <Columns>
+                        <asp:TemplateField HeaderText="Image">
+                            <ItemTemplate>
+                                <img src='/<%# Eval("ImagePath") %>'
+                                     width="80" height="60"
+                                     style="border-radius:6px; object-fit:cover;" 
+                                     onerror="this.src='/images/no-image.png';" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="Title" HeaderText="Title" />
+                        <asp:BoundField DataField="Location" HeaderText="Location" />
+                        <asp:BoundField DataField="Price" HeaderText="Price" DataFormatString="₹{0:N2}" />
+                        <asp:BoundField DataField="RejectionReason" HeaderText="Rejection Reason" ItemStyle-ForeColor="Red" ItemStyle-Font-Bold="true" />
+                        <asp:TemplateField HeaderText="Action">
+                            <ItemTemplate>
+                                <a href='Add-property.aspx?propertyId=<%# Eval("PropertyId") %>'
+                                   style="color:blue; margin-right:10px; font-weight:bold;">
+                                    Edit & Resubmit
+                                </a>
+                                <asp:LinkButton ID="btnDelete" runat="server"
+                                    CommandName="DeleteProperty"
+                                    CommandArgument='<%# Eval("PropertyId") %>'
+                                    OnClientClick="return confirm('Are you sure you want to delete this property?');"
+                                    style="color:red; font-weight:bold;">
+                                    Delete
+                                </asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
             </div>
         </div>
     </form>

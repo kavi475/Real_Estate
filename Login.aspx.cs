@@ -1,114 +1,146 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
+using System.Text.RegularExpressions;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace WebApplication1
 {
     public partial class Login : System.Web.UI.Page
     {
-        String strcon = ConfigurationManager.ConnectionStrings["RealEstateDB"].ConnectionString;
+        string strcon = ConfigurationManager.ConnectionStrings["RealEstateDB"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            lbl_message.Text = "";
         }
 
         protected void btn_login_Click(object sender, EventArgs e)
         {
-            if (txt_email.Text == "" || txt_password.Text == "")
+            lbl_message.ForeColor = System.Drawing.Color.Red;
+
+            string email = txt_email.Text.Trim();
+            string password = txt_password.Text.Trim();
+
+            // 🔹 1. Empty validation
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                lbl_message.Visible = true;
-                lbl_message.Text = "All fields are required";
+                lbl_message.Text = "⚠ Please enter both email and password.";
                 return;
             }
 
-            if (!txt_email.Text.Contains("@"))
+            // 🔹 2. Email format validation
+            if (!IsValidEmail(email))
             {
-                lbl_message.Visible = true;
-                lbl_message.Text = "Invalid email format";
+                lbl_message.Text = "⚠ Please enter a valid email address.";
                 return;
             }
 
-            if (txt_password.Text.Length < 7 || txt_password.Text.Length > 14)
+            // 🔹 3. Check email exists first
+            if (!IsEmailExists(email))
             {
-                lbl_message.Visible = true;
-                lbl_message.Text = "Password must be between 7 and 14 characters";
+                lbl_message.Text = "⚠ Account not found. Please register first.";
                 return;
             }
 
-            if (!ExistUser(txt_email.Text))
+            // 🔹 4. Password check
+            if (!ChkPassword(email, password))
             {
-                lbl_message.Visible = true;
-                lbl_message.Text = "User not registered.";
+                lbl_message.Text = "⚠ Incorrect password. Please try again.";
                 return;
             }
 
-            if (!ChkPassword(txt_email.Text, txt_password.Text))
+            // 🔹 5. Get Role + Agent Status
+            var info = GetUserAuthInfo(email);
+
+            // 🔒 Agent approval check
+            if (info.Role == "Agent" && info.AgentStatus != "Approved")
             {
-                lbl_message.Visible = true;
-                lbl_message.Text = "Incorrect password";
+                lbl_message.Text = "⚠ Your agent account is pending admin approval.";
                 return;
             }
 
-            String role = GetUserRole(txt_email.Text);
+            // 🔹 SUCCESS MESSAGE (optional flash)
+            lbl_message.ForeColor = System.Drawing.Color.Green;
+            lbl_message.Text = "Login successful! Redirecting...";
 
-            Session["email"] = txt_email.Text;
-            Session["role"] = role;
+            // 🔹 Session
+            Session["email"] = email;
+            Session["role"] = info.Role;
 
-            if (role == "Admin")
-            {
+            // 🔹 Redirect
+            if (info.Role == "Admin")
                 Response.Redirect("/Admin/AdminDashboard.aspx");
-            }
-            else if (role == "Agent")
-            {
+            else if (info.Role == "Agent")
                 Response.Redirect("/Agent/Dashboard.aspx");
-            }
             else
+                Response.Redirect("/User/UserDashboard.aspx");
+        }
+
+        // ================= HELPERS =================
+
+        private bool IsValidEmail(string email)
+        {
+            return Regex.IsMatch(email,
+                @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
+
+        private bool IsEmailExists(string email)
+        {
+            using (SqlConnection con = new SqlConnection(strcon))
             {
-                Response.Redirect("~/User/UserDashboard.aspx");
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT COUNT(*) FROM Users WHERE Email=@Email", con);
+
+                cmd.Parameters.AddWithValue("@Email", email);
+
+                con.Open();
+                int count = (int)cmd.ExecuteScalar();
+
+                return count > 0;
             }
         }
 
-        public bool ExistUser(String email)
+        private bool ChkPassword(string email, string password)
         {
-            SqlConnection con = new SqlConnection(strcon);
-            String query = "SELECT COUNT(*) FROM Users WHERE Email=@email";
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@email", email.Trim());
-            con.Open();
-            int count = Convert.ToInt32(cmd.ExecuteScalar());
-            con.Close();
-            return count > 0;
+            using (SqlConnection con = new SqlConnection(strcon))
+            {
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT Password FROM Users WHERE Email=@Email", con);
+
+                cmd.Parameters.AddWithValue("@Email", email);
+
+                con.Open();
+                object hash = cmd.ExecuteScalar();
+
+                if (hash == null) return false;
+
+                return BCrypt.Net.BCrypt.Verify(password, hash.ToString());
+            }
         }
 
-        public bool ChkPassword(String email, String password)
+        private (string Role, string AgentStatus) GetUserAuthInfo(string email)
         {
-            SqlConnection con = new SqlConnection(strcon);
-            String query = "SELECT COUNT(*) FROM Users WHERE Email=@email AND Password=@password";
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@email", email);
-            cmd.Parameters.AddWithValue("@password", password);
-            con.Open();
-            int count = Convert.ToInt32(cmd.ExecuteScalar());
-            con.Close();
-            return count > 0;
-        }
+            using (SqlConnection con = new SqlConnection(strcon))
+            {
+                SqlCommand cmd = new SqlCommand(@"
+                    SELECT u.Role, ISNULL(a.Status,'Approved') AS Status
+                    FROM Users u
+                    LEFT JOIN AgentProfiles a ON u.UserId = a.UserId
+                    WHERE u.Email = @Email", con);
 
-        public String GetUserRole(String email)
-        {
-            SqlConnection con = new SqlConnection(strcon);
-            String query = "SELECT ROLE FROM Users WHERE Email=@email";
-            SqlCommand cmd = new SqlCommand(query, con);
-            cmd.Parameters.AddWithValue("@email", email);
-            con.Open();
-            String role = cmd.ExecuteScalar().ToString();
-            con.Close();
-            return role;
+                cmd.Parameters.AddWithValue("@Email", email);
+
+                con.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    return (dr["Role"].ToString(), dr["Status"].ToString());
+                }
+            }
+
+            return ("User", "Approved");
         }
     }
 }
